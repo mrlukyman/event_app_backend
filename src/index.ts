@@ -1,43 +1,57 @@
 import { createServer } from "http";
 import express from "express";
 import { ApolloServer, gql } from "apollo-server-express";
+import { prisma } from './prisma/client'
 
-// 1
+
 const startServer = async () => {
-
-  // 2
   const app = express()
   const httpServer = createServer(app)
 
-  // 3
   const typeDefs = gql`
     type Query {
-      hello: String
+      users: [User!]!
     }
-  `;
+    type User {
+      id: ID!
+      name: String!
+      events: [Event!]!
+    }
+    type Query {
+      events: [Event!]!
+    }
+    type Event {
+      id: ID!
+      name: String!
+      description: String!
+      thumbnail: String!
+      creator: User!
+      creatorId: Int!
+    }
+    `
 
-  // 4
   const resolvers = {
     Query: {
-      hello: () => 'Hello world!',
-    },
-  };
+      events: async () => {
+        return await prisma.event.findMany()
+      },
+      users: async () => {
+        return await prisma.user.findMany()
+      },
+    }
+  }
 
-  // 5
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
   })
 
-  // 6
   await apolloServer.start()
 
-  // 7
   apolloServer.applyMiddleware({
       app,
   })
 
-  // 8
   httpServer.listen({ port: process.env.PORT || 4000 }, () =>
     console.log(`Server listening on localhost:4000${apolloServer.graphqlPath}`)
   )
