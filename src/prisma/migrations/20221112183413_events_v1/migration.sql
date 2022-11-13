@@ -1,11 +1,6 @@
-/*
-  Warnings:
-
-  - You are about to drop the `Board` table. If the table is not empty, all the data it contains will be lost.
-
-*/
--- DropTable
-DROP TABLE "Board";
+-- SQLBook: Code
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('User', 'Admin');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -14,6 +9,7 @@ CREATE TABLE "User" (
     "name" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'User',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -26,6 +22,7 @@ CREATE TABLE "Event" (
     "thumbnail" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL,
     "creatorId" INTEGER NOT NULL,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")

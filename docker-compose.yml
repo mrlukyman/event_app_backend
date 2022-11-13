@@ -10,5 +10,14 @@ services:
       - postgres:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  prisma:
+    image: events
+    restart: always
+    depends_on:
+      - "postgres"
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password123@postgres:5432/mydb?schema=public
 volumes:
   postgres:

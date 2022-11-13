@@ -9,41 +9,77 @@ const startServer = async () => {
   const httpServer = createServer(app)
 
   const typeDefs = gql`
+    scalar Date
     type Query {
-      users: [User!]!
+      user(id: ID!): User
+      events: [Event!]!
     }
     type User {
       id: ID!
       name: String!
-      events: [Event!]!
-    }
-    type Query {
-      events: [Event!]!
+      email: String!
     }
     type Event {
       id: ID!
       name: String!
-      description: String!
-      thumbnail: String!
-      creator: User!
-      creatorId: Int!
+      description: String
+      thumbnailUrl: String
+      date: Date!
+      creator: User
+    }
+    type Mutation {
+      createEvent(name: String!, description: String, thumbnailUrl: String, date: Date!): Event
+      createUser(email: String!, name: String): User
     }
     `
 
   const resolvers = {
     Query: {
-      events: async () => {
+      user: async (_parent: any, { id }: any, _context: any) => {
+        return await prisma.user.findUnique({
+          where: {
+            id: Number(id)
+          }
+        })
+      },
+      events: async (_parent: any, _args: any, _context: any) => {
         return await prisma.event.findMany()
+      }
+    },
+    Mutation: {
+      createEvent: async (_parent: any, { name, description, thumbnailUrl, date, id }: any, _context: any) => {
+        return await prisma.event.create({
+          data: {
+            name,
+            description,
+            thumbnailUrl,
+            date,
+            creator: {
+              connect: {  
+                id: Number(1)
+              }
+            }
+          }
+        })
       },
-      users: async () => {
-        return await prisma.user.findMany()
-      },
+      createUser: async (_parent: any, {email, name}: any, context: any) => {
+        return await prisma.user.create({
+          data: {
+            email,
+            name
+          }
+        })
+      }
+
     }
   }
 
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
+    introspection: true,
+    // @ts-expect-error
+    playground: true,
   })
 
   await apolloServer.start()
