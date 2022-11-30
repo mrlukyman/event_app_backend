@@ -1,6 +1,7 @@
 import { createServer } from "http";
-import express from "express";
-import { ApolloServer, gql } from "apollo-server-express";
+import express from "express"
+import cors from "cors"
+import { ApolloServer, gql } from "apollo-server-express"
 import { prisma } from './prisma/client'
 
 
@@ -73,6 +74,8 @@ const startServer = async () => {
 
     }
   }
+
+  app.use(cors())
 
   const apolloServer = new ApolloServer({
     typeDefs,
