@@ -31,6 +31,7 @@ const startServer = async () => {
     type Mutation {
       createEvent(name: String!, description: String, thumbnailUrl: String, date: Date!): Event
       createUser(email: String!, name: String): User
+      deleteEvent(id: ID!): Event
     }
     `
 
@@ -70,8 +71,21 @@ const startServer = async () => {
             name
           }
         })
-      }
-
+      },
+      deleteUser: async (_parent: any, {id}: any, context: any) => {
+        return await prisma.user.delete({
+          where: {
+            id: Number(id)
+          }
+        })
+      },
+      deleteEvent: async (_parent: any, {id}: any, context: any) => {
+        return await prisma.event.delete({
+          where: {
+            id: Number(id)
+          }
+        })
+      },
     }
   }
 
