@@ -22,7 +22,7 @@ model User {
 
 model Event {
   id           Int      @id @default(autoincrement())
-  name         String
+  name         String //TODO: change to title
   description  String?
   thumbnailUrl String?
   createdAt    DateTime @default(now())
