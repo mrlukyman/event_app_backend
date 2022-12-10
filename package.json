@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "build": "rimraf ./build && tsc",
+    "build": "rimraf ./build && tsc && docker build -t events . && docker-compose up",
     "start": "yarn build && node build/index.js",
     "migrate": "npx prisma migrate dev",
     "codegen": "graphql-codegen --config codegen.ts"
