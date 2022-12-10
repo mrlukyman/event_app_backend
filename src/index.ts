@@ -22,15 +22,18 @@ const startServer = async () => {
     }
     type Event {
       id: ID!
-      name: String!
+      title: String!
       description: String
       thumbnailUrl: String
       date: Date!
       creator: User
+      price: Float
     }
     type Mutation {
-      createEvent(name: String!, description: String, thumbnailUrl: String, date: Date!): Event
+      createEvent(title: String!, description: String, thumbnailUrl: String, date: Date!, price: Float ): Event
       createUser(email: String!, name: String): User
+      deleteEvent(id: ID!): Event
+      deleteUser(id: ID!): User
     }
     `
 
@@ -48,15 +51,16 @@ const startServer = async () => {
       }
     },
     Mutation: {
-      createEvent: async (_parent: any, { name, description, thumbnailUrl, date, id }: any, _context: any) => {
+      createEvent: async (_parent: any, { title, description, thumbnailUrl, date, price }: any, _context: any) => {
         return await prisma.event.create({
           data: {
-            name,
+            title,
             description,
             thumbnailUrl,
             date,
+            price,
             creator: {
-              connect: {  
+              connect: {
                 id: Number(1)
               }
             }
@@ -70,8 +74,21 @@ const startServer = async () => {
             name
           }
         })
-      }
-
+      },
+      deleteUser: async (_parent: any, {id}: any, context: any) => {
+        return await prisma.user.delete({
+          where: {
+            id: Number(id)
+          }
+        })
+      },
+      deleteEvent: async (_parent: any, {id}: any, context: any) => {
+        return await prisma.event.delete({
+          where: {
+            id: Number(id)
+          }
+        })
+      },
     }
   }
 
