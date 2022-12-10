@@ -77,6 +77,7 @@ const startServer = async () => {
 
   app.use(cors())
 
+
   const apolloServer = new ApolloServer({
     typeDefs,
     resolvers,
